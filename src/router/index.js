@@ -1,16 +1,31 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
-import Home from "../views/MainView.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
     path: "/",
-    name: "Main",
-    component: Home,
+    name: "Home",
+    component: () => import("../components/persons-list"),
     meta: {
       title: "Главная"
+    }
+  },
+  {
+    path: "/about",
+    name: "About",
+    component: () => import("../components/about"),
+    meta: {
+      title: "О приложении"
+    }
+  },
+  {
+    path: "/person",
+    name: "Person",
+    component: () => import("../components/person"),
+    meta: {
+      title: "Сотрудник"
     }
   }
 ];
