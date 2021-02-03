@@ -14,8 +14,14 @@ const routes = [
 
 const router = new VueRouter({
   mode: "history",
-  base: process.env.BASE_URL,
+  //  base: process.env.BASE_URL,
   routes
+});
+
+router.beforeEach((to, from, next) => {
+  console.log(to);
+  document.title = `${process.env.VUE_APP_TITLE} | ${to.name}`;
+  next();
 });
 
 export default router;
