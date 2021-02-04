@@ -21,7 +21,7 @@ const routes = [
     }
   },
   {
-    path: "/person",
+    path: "/person/:id",
     name: "Person",
     component: () => import("../components/person"),
     meta: {
@@ -37,7 +37,6 @@ const router = new VueRouter({
 });
 
 router.beforeEach((to, from, next) => {
-  console.log(to);
   document.title = `${process.env.VUE_APP_TITLE} | ${to.meta.title}`;
   next();
 });

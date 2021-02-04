@@ -11,10 +11,6 @@ export default {
   name: "App",
   components: {
     MainView
-  },
-
-  data: () => ({
-    //
-  })
+  }
 };
 </script>
