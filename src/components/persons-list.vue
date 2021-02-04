@@ -9,8 +9,9 @@
         hide-default-footer
       >
         <template v-slot:header>
-          <v-toolbar dark color="blue darken-3" class="mb-1">
-            <v-spacer></v-spacer>
+          <v-toolbar dark color="lime darken-4
+" class="mb-1">
+
             <v-select
               v-model="sortBy"
               flat
@@ -21,11 +22,28 @@
             ></v-select>
             <v-spacer></v-spacer>
             <template v-if="$vuetify.breakpoint.mdAndUp">
+
+              <p class="pa-1">Сортировка по имени</p>
               <v-btn-toggle v-model="sortDesc" mandatory>
-                <v-btn large depressed color="blue" :value="false">
+                <v-btn large depressed color="lime darken-2
+" :value="false">
+                  <v-icon>mdi-arrow-up</v-icon>
+
+                </v-btn>
+                <v-btn large depressed color="lime darken-2
+" :value="true">
                   <v-icon>mdi-arrow-up</v-icon>
                 </v-btn>
-                <v-btn large depressed color="blue" :value="true">
+              </v-btn-toggle>
+              <p class="pa-1">Сортировка по дате рождения</p>
+              <v-btn-toggle v-model="sortDesc" mandatory>
+                <v-btn large depressed color="lime darken-2
+" :value="false">
+                  <v-icon>mdi-arrow-up</v-icon>
+
+                </v-btn>
+                <v-btn large depressed color="lime darken-2
+" :value="true">
                   <v-icon>mdi-arrow-up</v-icon>
                 </v-btn>
               </v-btn-toggle>
@@ -38,25 +56,8 @@
         </template>
 
         <template v-slot:default="props">
-          <v-card
-            elevation="7"
-            class="mb-4"
-            v-for="item in props.items"
-            :key="item.name"
-          >
-            <v-card-title class="subheading font-weight-bold">
-              {{ item.name }}
-            </v-card-title>
-
-            <v-divider />
-            <v-card-text class="font-weight-bold"
-              >Должность: {{ item.role }}</v-card-text
-            >
-            <v-card-text class="font-weight-bold"
-              >Номер телефона: {{ item.phone }}</v-card-text
-            >
-            <v-card-actions><v-btn>Открыть карточку</v-btn></v-card-actions>
-          </v-card>
+          <PersonCard  v-for="item in props.items"
+                       :key="item.name"></PersonCard>
         </template>
       </v-data-iterator>
     </v-container>
@@ -64,6 +65,7 @@
 </template>
 
 <script>
+  import PersonCard from "../components/percon-card"
 export default {
   data() {
     return {
@@ -219,6 +221,7 @@ export default {
       ]
     };
   },
+    components: PersonCard,
   computed: {
     filteredKeys() {
       return this.keys.filter(key => key !== "Name");
