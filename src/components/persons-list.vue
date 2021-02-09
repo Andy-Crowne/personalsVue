@@ -10,65 +10,82 @@
         disable-pagination
         hide-default-footer
       >
-        <template v-slot:header class="">
-          <v-toolbar dark color="lime darken-4" class="mb-1">
-            <template>
-              <v-select
-                flat
-                clearable
-                solo-inverted
-                hide-details
-                :items="getAllRoles"
-                class="selector "
-                prepend-inner-icon="mdi-filter"
-                label="Должность"
-                @change="onChangeRole"
-              ></v-select>
-              <v-checkbox
-                @change="onChangeArchive"
-                label="В архиве"
-                hide-details
-                class="ml-3"
-              ></v-checkbox>
+        <template v-slot:header>
+          <v-toolbar
+            dark
+            color="lime darken-4"
+            class="mb-1"
+            :height="$vuetify.breakpoint.xs ? 170 : 56"
+          >
+            <div class="custom_class">
+              <div class="custom_filter">
+                <v-select
+                  :dense="$vuetify.breakpoint.sm || $vuetify.breakpoint.xs"
+                  flat
+                  clearable
+                  solo-inverted
+                  hide-details
+                  :items="getAllRoles"
+                  class="selector "
+                  prepend-inner-icon="mdi-filter"
+                  label="Должность"
+                  @change="onChangeRole"
+                ></v-select>
+                <v-checkbox
+                  @change="onChangeArchive"
+                  label="В архиве"
+                  hide-details
+                  class="ml-3"
+                ></v-checkbox>
+              </div>
               <v-spacer></v-spacer>
-              <v-select
-                v-model="sortBy"
-                flat
-                solo-inverted
-                class="selector"
-                hide-details
-                :items="sortKeys"
-                :item-text="sortKeys.text"
-                :item-value="sortKeys.value"
-                prepend-inner-icon="mdi-magnify"
-                label="Sort by"
-              ></v-select>
+              <div class="custom_sort">
+                <v-select
+                  :dense="$vuetify.breakpoint.sm || $vuetify.breakpoint.xs"
+                  v-model="sortBy"
+                  flat
+                  solo-inverted
+                  class="selector"
+                  hide-details
+                  :items="sortKeys"
+                  :item-text="sortKeys.text"
+                  :item-value="sortKeys.value"
+                  prepend-inner-icon="mdi-sort-descending"
+                  label="Sort by"
+                ></v-select>
 
-              <v-btn-toggle v-model="sortDesc" mandatory class="ml-3">
-                <v-btn
-                  large
-                  depressed
-                  color="lime darken-3
-"
-                  :value="false"
-                >
-                  <v-icon>mdi-arrow-up</v-icon>
-                </v-btn>
-                <v-btn
-                  large
-                  depressed
-                  color="lime darken-3
-"
-                  :value="true"
-                >
-                  <v-icon>mdi-arrow-down</v-icon>
-                </v-btn>
-              </v-btn-toggle>
-            </template>
-            <v-spacer></v-spacer>
-            <v-btn elevation="2" color="lime darken-3" large :to="`person/new`"
-              ><v-icon left>mdi-plus</v-icon>Добавить</v-btn
-            >
+                <v-btn-toggle v-model="sortDesc" mandatory class="ml-3">
+                  <v-btn
+                    :large="$vuetify.breakpoint.lg || $vuetify.breakpoint.md"
+                    :small="$vuetify.breakpoint.sm || $vuetify.breakpoint.xs"
+                    depressed
+                    color="lime darken-3"
+                    :value="false"
+                  >
+                    <v-icon>mdi-arrow-up</v-icon>
+                  </v-btn>
+                  <v-btn
+                    :large="$vuetify.breakpoint.lg || $vuetify.breakpoint.md"
+                    :small="$vuetify.breakpoint.sm || $vuetify.breakpoint.xs"
+                    depressed
+                    color="lime darken-3"
+                    :value="true"
+                  >
+                    <v-icon>mdi-arrow-down</v-icon>
+                  </v-btn>
+                </v-btn-toggle>
+              </div>
+              <v-spacer></v-spacer>
+              <v-btn
+                elevation="2"
+                color="lime darken-3"
+                large
+                :to="`person/new`"
+                :height="$vuetify.breakpoint.xs? 30: 44&& $vuetify.breakpoint.sm? 30: 44"
+                :width="$vuetify.breakpoint.xs ? '100%' : 130"
+                ><v-icon left>mdi-plus</v-icon>Добавить</v-btn
+              >
+            </div>
           </v-toolbar>
         </template>
         <template v-slot:default="props">
@@ -149,5 +166,40 @@ export default {
 <style lang="scss" scoped>
 .selector {
   width: 120px;
+}
+.custom_class {
+  width: 100%;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+.custom_filter {
+  width: 340px;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+.custom_sort {
+  width: 540px;
+  align-items: center;
+  display: flex;
+  position: relative;
+}
+@media screen and (max-width: 768px) {
+  .custom_sort {
+    width: 400px;
+  }
+}
+
+@media screen and (max-width: 600px) {
+  .custom_class {
+    flex-wrap: wrap;
+  }
+  .custom_filter {
+    margin-bottom: 5px;
+  }
+  .custom_sort {
+    margin-bottom: 5px;
+  }
 }
 </style>
