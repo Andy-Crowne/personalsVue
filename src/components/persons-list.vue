@@ -5,11 +5,12 @@
         :items="personalList"
         :sort-by="sortBy.toLowerCase()"
         :sort-desc="sortDesc"
+        :custom-sort="sort"
         :search="search"
         disable-pagination
         hide-default-footer
       >
-        <template v-slot:header>
+        <template v-slot:header class="">
           <v-toolbar dark color="lime darken-4" class="mb-1">
             <template>
               <v-select
@@ -18,7 +19,7 @@
                 solo-inverted
                 hide-details
                 :items="getAllRoles"
-                class="selector"
+                class="selector "
                 prepend-inner-icon="mdi-filter"
                 label="Должность"
                 @change="onChangeRole"
@@ -83,9 +84,11 @@
 <script>
 import PersonCard from "../components/percon-card";
 import { mapState, mapGetters } from "vuex";
+import moment from "moment";
 export default {
   data() {
     return {
+      dateFormat: "DD.MM.YYYY",
       personalList: [],
       search: "",
       checkbox: true,
@@ -104,6 +107,26 @@ export default {
     ...mapGetters(["getAllRoles"])
   },
   methods: {
+    sort(items, sortKey, sortDesc) {
+      items.sort((a, b) => {
+        if (sortKey[0] === "birthday") {
+          let aDate = moment(a.birthday, this.dateFormat);
+          let bDate = moment(b.birthday, this.dateFormat);
+          if (!sortDesc[0]) {
+            return aDate > bDate ? 1 : -1;
+          } else {
+            return aDate < bDate ? 1 : -1;
+          }
+        } else {
+          if (!sortDesc[0]) {
+            return a[sortKey[0]] < b[sortKey[0]] ? -1 : 1;
+          } else {
+            return b[sortKey[0]] < a[sortKey[0]] ? -1 : 1;
+          }
+        }
+      });
+      return items;
+    },
     onChangeRole(value) {
       this.search = value;
     },

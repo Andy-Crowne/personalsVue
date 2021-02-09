@@ -8,7 +8,7 @@
               <v-col class="d-flex" cols="12" sm="6">
                 <v-text-field
                   @change="onChange($event, 'name')"
-                  :value="person.name"
+                  :value="formValues.name"
                   :rules="[notEmpty]"
                   label="Имя Фамилия"
                 ></v-text-field>
@@ -17,7 +17,7 @@
               <v-col class="d-flex" cols="12" sm="6">
                 <v-select
                   :items="getAllRoles"
-                  :value="person.role"
+                  :value="formValues.role"
                   :rules="[notEmpty]"
                   @change="onChange($event, 'role')"
                   label="Должность"
@@ -26,8 +26,8 @@
               <v-col class="d-flex" cols="12" sm="6">
                 <v-text-field
                   v-mask="dateMask"
-                  :value="person.birthday"
-                  :rules="[notEmpty]"
+                  :value="formValues.birthday"
+                  :rules="[notEmpty, validDate]"
                   @change="onChange($event, 'birthday')"
                   label="Дата рождения"
                 ></v-text-field>
@@ -36,15 +36,15 @@
               <v-col class="d-flex" cols="12" sm="6">
                 <v-text-field
                   v-mask="phoneMask"
-                  :value="person.phone"
-                  :rules="[notEmpty]"
+                  :value="formValues.phone"
+                  :rules="[notEmpty, validPhone]"
                   label="Телефон"
                   @change="onChange($event, 'phone')"
                 ></v-text-field>
               </v-col>
               <v-col class="d-flex" cols="12" sm="6">
                 <v-checkbox
-                  :input-value="person.isArchive"
+                  :input-value="formValues.isArchive"
                   @change="onChange($event, 'isArchive')"
                   :label="`В архиве`"
                 ></v-checkbox>
@@ -56,7 +56,10 @@
               Отмена
             </v-btn>
             <v-spacer />
-            <v-btn class="lime darken-2" :disabled="!valid" @click="saveForm"
+            <v-btn
+              class="lime darken-2"
+              :disabled="!valid || !needSave"
+              @click="saveForm"
               >Сохранить</v-btn
             >
           </v-card-actions>
@@ -75,21 +78,30 @@
 <script>
 import { mapGetters, mapActions } from "vuex";
 import { mask } from "vue-the-mask";
+import moment from "moment";
+import { uuid } from "@/helpers";
+
 export default {
   beforeMount() {
-    if (this.isNew) return;
+    if (this.isNew) {
+      this.newId = uuid();
+      return;
+    }
     this.person = this.getPerosonById(this.$route.params.id);
+    this.formValues = Object.assign({}, this.person);
   },
   directives: {
     mask
   },
   data() {
     return {
+      newId: false,
+      dateFormat: "DD.MM.YYYY",
       saved: false,
-      person: { name: "", role: "", birthday: "", phone: "" },
+      person: {},
       timeOut: 5000,
       formValues: {},
-      phoneMask: "#(###)-###-####",
+      phoneMask: "+#(###)-###-####",
       dateMask: "##.##.####",
       valid: false
     };
@@ -98,12 +110,28 @@ export default {
     ...mapGetters(["getPerosonById", "getAllRoles"]),
     isNew() {
       return this.$route.params.id == "new";
+    },
+    needSave() {
+      if (this.isNew) return true;
+      return JSON.stringify(this.formValues) !== JSON.stringify(this.person);
     }
   },
   methods: {
     ...mapActions(["updatePerson", "addPerson"]),
     onChange(value, key) {
       this.formValues[key] = value;
+    },
+    validDate(date) {
+      if (!date) return false;
+      let inputDate = moment(date, this.dateFormat);
+      return (
+        inputDate.isValid() && moment(new Date(), this.dateFormat) > inputDate
+      );
+    },
+    validPhone(phone) {
+      if (!phone || !phone.length) return false;
+      let phoneMatch = phone.match(/\d/g);
+      return phoneMatch ? phoneMatch.length === 11 : false;
     },
     notEmpty(value) {
       return !!value && !!value.length;
@@ -113,17 +141,15 @@ export default {
     },
     saveForm() {
       if (this.isNew) {
-        this.addPerson(this.formValues);
+        this.addPerson({ id: this.newId, person: this.formValues });
+        this.saved = true;
       } else {
-        for (let key in this.formValues) {
-          this.updatePerson({
-            id: this.$route.params.id,
-            value: this.formValues[key],
-            key
-          });
-        }
+        this.updatePerson({
+          id: this.$route.params.id,
+          person: this.formValues
+        });
+        this.saved = true;
       }
-      this.saved = true;
       setTimeout(() => {
         this.saved = false;
       }, this.timeOut);
